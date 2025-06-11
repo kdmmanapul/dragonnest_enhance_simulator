@@ -214,7 +214,7 @@ export default function EnhancementSimulator() {
   const handleSetTotalAttempts = () => {
     if (isAutoEnhancing) return;
     let tempLevel = currentLevelRef.current;
-    let newAttempts: EnhancementResult[] = [...attempts];
+    const newAttempts: EnhancementResult[] = [...attempts];
     for (let i = 0; i < totalAttemptsInput; i++) {
       if (tempLevel >= targetLevel || tempLevel >= 15) break; // Stop if target level or max level is reached
       const result = enhance(tempLevel);
