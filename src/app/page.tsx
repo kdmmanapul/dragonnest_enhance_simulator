@@ -386,8 +386,8 @@ export default function EnhancementSimulator() {
                   <p className="text-2xl font-bold text-green-700">{(stats.successRate * 100).toFixed(1)}%</p>
                 </div>
                 <div className="p-4 bg-red-50 border border-red-100 rounded-lg text-center">
-                  <p className="text-sm text-gray-500">Damage Rate</p>
-                  <p className="text-2xl font-bold text-red-700">{(stats.damageRate * 100).toFixed(1)}%</p>
+                  <p className="text-sm text-gray-500">PHP Cost</p>
+                  <p className="text-2xl font-bold text-red-700">{(stats.totalGoldSpent * 0.7).toLocaleString()} PHP</p>
                 </div>
                 <div className="p-4 bg-purple-50 border border-purple-100 rounded-lg text-center col-span-2">
                   <p className="text-sm text-gray-500">Chance to reach +{targetLevel} from +{currentLevel}</p>
