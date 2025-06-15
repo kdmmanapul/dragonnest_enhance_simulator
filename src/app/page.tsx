@@ -43,7 +43,7 @@ const ENHANCEMENT_RULES: Record<number, EnhancementRules> = {
   15: { successRate: 0.01, damageRate: 0.25, failurePenalty: -2 },
 };
 
-const ENHANCE_COST = 2;
+const ENHANCE_COST = 5;
 
 function calculateReachTargetChance(current: number, target: number): number {
   if (target <= current) return 1;
@@ -126,11 +126,11 @@ export default function EnhancementSimulator() {
       const level = attempt.newLevel;
       // Jelly cost tiers
       const jellyPerAttempt = 
-        level <= 3 ? 1 :
-        level <= 6 ? 2 :
-        level <= 10 ? 3 :
-        level <= 13 ? 4 :
-        level <= 14 ? 5 : 6;
+        level <= 3 ? 18 :
+        level <= 6 ? 18 :
+        level <= 10 ? 18 :
+        level <= 13 ? 18 :
+        level <= 14 ? 18 : 24;
       return sum + jellyPerAttempt;
     }, 0);
 
@@ -152,9 +152,9 @@ export default function EnhancementSimulator() {
       const diamondPerAttempt = 
         level <= 3 ? 1 :
         level <= 6 ? 2 :
-        level <= 10 ? 3 :
-        level <= 13 ? 4 :
-        level <= 14 ? 5 : 6;
+        level <= 10 ? 2 :
+        level <= 13 ? 3 :
+        level <= 14 ? 4 : 6;
       return sum + diamondPerAttempt;
     }, 0);
 
@@ -308,20 +308,22 @@ export default function EnhancementSimulator() {
               <p className="text-lg sm:text-2xl font-bold text-green-700">{(stats.successRate * 100).toFixed(1)}%</p>
             </div>
             <div className="p-2 sm:p-4 bg-purple-50 border border-purple-100 rounded-lg text-center">
-              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Jelly Cost</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Jelly Cost (2.41G)</p>
               <p className="text-lg sm:text-2xl font-bold text-purple-700">{stats.jellyCost.toLocaleString()}</p>
             </div>
             <div className="p-2 sm:p-4 bg-emerald-50 border border-emerald-100 rounded-lg text-center">
-              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Essence of Life</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Essence of Life (7G)</p>
               <p className="text-lg sm:text-2xl font-bold text-emerald-700">{stats.essenceCost.toLocaleString()}</p>
             </div>
             <div className="p-2 sm:p-4 bg-cyan-50 border border-cyan-100 rounded-lg text-center">
-              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Diamond Cost</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Diamond Cost (2.5G)</p>
               <p className="text-lg sm:text-2xl font-bold text-cyan-700">{stats.diamondCost.toLocaleString()}</p>
             </div>
             <div className="p-2 sm:p-4 bg-red-50 border border-red-100 rounded-lg text-center col-span-2">
               <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">PHP Cost</p>
-              <p className="text-lg sm:text-2xl font-bold text-red-700">{(stats.totalGoldSpent * 0.7).toLocaleString()} PHP</p>
+              <p className="text-lg sm:text-2xl font-bold text-red-700">
+                {((stats.totalGoldSpent + (stats.essenceCost * 7) + (stats.diamondCost * 2.5) + (stats.jellyCost * 2.41)) * 0.7).toLocaleString()} PHP
+              </p>
             </div>
             <div className="p-2 sm:p-4 bg-indigo-50 border border-indigo-100 rounded-lg text-center col-span-2">
               <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Chance to reach +{targetLevel} from +{currentLevel}</p>
