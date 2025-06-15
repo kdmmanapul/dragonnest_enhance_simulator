@@ -75,6 +75,7 @@ export default function EnhancementSimulator() {
   const [reachTargetChance, setReachTargetChance] = useState<number>(calculateReachTargetChance(1, 15));
   const [setLevelInput, setSetLevelInput] = useState<number>(1);
   const [totalAttemptsInput, setTotalAttemptsInput] = useState<number>(100);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   // Update the ref whenever currentLevel changes
   useEffect(() => {
@@ -273,20 +274,11 @@ export default function EnhancementSimulator() {
     currentLevelRef.current = tempLevel;
   };
 
-  // Cleanup interval on component unmount
+  // Add auto-scroll effect for the table container
   useEffect(() => {
-    return () => {
-      if (autoEnhanceInterval.current) {
-        clearInterval(autoEnhanceInterval.current);
-      }
-    };
-  }, []);
-
-  // Auto-scroll to the latest attempt in the table
-  const attemptsEndRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (attemptsEndRef.current) {
-      attemptsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (tableContainerRef.current) {
+      const container = tableContainerRef.current;
+      container.scrollTop = container.scrollHeight;
     }
   }, [attempts]);
 
@@ -297,9 +289,50 @@ export default function EnhancementSimulator() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 flex flex-col sm:flex-row items-center justify-center py-4 sm:py-8 px-2 relative">
-      {/* Level Hits Card - Original desktop position with mobile improvements */}
-      <div className="relative sm:absolute top-0 sm:top-8 right-0 sm:right-8 z-20 w-full sm:w-[400px] mb-4 sm:mb-0">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 flex flex-col items-center justify-center py-4 sm:py-8 px-2 relative">
+      {/* Statistics Card - Left side on desktop, below on mobile */}
+      <div className="relative w-full sm:absolute sm:top-60 sm:left-80 z-20 sm:w-[400px] mb-4 sm:mb-0 order-2 sm:order-none mt-8 sm:mt-0">
+        <div className="p-3 sm:p-4 bg-white border border-gray-200 rounded-lg shadow">
+          <h2 className="text-base sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 text-center">Statistics</h2>
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
+            <div className="p-2 sm:p-4 bg-blue-50 border border-blue-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Total Attempts</p>
+              <p className="text-lg sm:text-2xl font-bold text-blue-700">{stats.totalAttempts}</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-yellow-50 border border-yellow-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Gold Spent</p>
+              <p className="text-lg sm:text-2xl font-bold text-yellow-700">{stats.totalGoldSpent.toLocaleString()}</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-green-50 border border-green-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Success Rate</p>
+              <p className="text-lg sm:text-2xl font-bold text-green-700">{(stats.successRate * 100).toFixed(1)}%</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-purple-50 border border-purple-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Jelly Cost</p>
+              <p className="text-lg sm:text-2xl font-bold text-purple-700">{stats.jellyCost.toLocaleString()}</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-emerald-50 border border-emerald-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Essence of Life</p>
+              <p className="text-lg sm:text-2xl font-bold text-emerald-700">{stats.essenceCost.toLocaleString()}</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-cyan-50 border border-cyan-100 rounded-lg text-center">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Diamond Cost</p>
+              <p className="text-lg sm:text-2xl font-bold text-cyan-700">{stats.diamondCost.toLocaleString()}</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-red-50 border border-red-100 rounded-lg text-center col-span-2">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">PHP Cost</p>
+              <p className="text-lg sm:text-2xl font-bold text-red-700">{(stats.totalGoldSpent * 0.7).toLocaleString()} PHP</p>
+            </div>
+            <div className="p-2 sm:p-4 bg-indigo-50 border border-indigo-100 rounded-lg text-center col-span-2">
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Chance to reach +{targetLevel} from +{currentLevel}</p>
+              <p className="text-lg sm:text-2xl font-bold text-indigo-700">{(reachTargetChance * 100).toFixed(6)}%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Level Hits Card - Right side on desktop, below on mobile */}
+      <div className="relative w-full sm:absolute sm:top-90 sm:right-80 z-20 sm:w-[400px] mb-4 sm:mb-0 order-3 sm:order-none">
         <div className="p-3 sm:p-4 bg-white border border-gray-200 rounded-lg shadow text-center">
           <h2 className="text-base sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800">Level Hits</h2>
           <ul className="grid grid-cols-3 sm:grid-cols-5 gap-1 sm:gap-4 text-xs sm:text-base">
@@ -313,8 +346,8 @@ export default function EnhancementSimulator() {
         </div>
       </div>
       
-      {/* Main Card - Original desktop layout with mobile improvements */}
-      <div className="p-3 sm:p-8 w-full max-w-[95%] sm:max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200">
+      {/* Main Card - Center, first on mobile */}
+      <div className="p-3 sm:p-8 w-full max-w-[95%] sm:max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 order-1 sm:order-none">
         <h1 className="text-xl sm:text-3xl font-extrabold mb-4 sm:mb-8 text-center text-gray-800 tracking-tight">Enhancement Simulator</h1>
         
         <div className="mb-4 sm:mb-8">
@@ -425,50 +458,11 @@ export default function EnhancementSimulator() {
 
         {attempts.length > 0 && (
           <>
-            {/* Statistics - Mobile improvements only */}
-            <div className="mt-6 sm:mt-8">
-              <h2 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Statistics</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 sm:gap-6">
-                <div className="p-2 sm:p-4 bg-blue-50 border border-blue-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Total Attempts</p>
-                  <p className="text-lg sm:text-2xl font-bold text-blue-700">{stats.totalAttempts}</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-yellow-50 border border-yellow-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Gold Spent</p>
-                  <p className="text-lg sm:text-2xl font-bold text-yellow-700">{stats.totalGoldSpent.toLocaleString()}</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-green-50 border border-green-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Success Rate</p>
-                  <p className="text-lg sm:text-2xl font-bold text-green-700">{(stats.successRate * 100).toFixed(1)}%</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-purple-50 border border-purple-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Jelly Cost</p>
-                  <p className="text-lg sm:text-2xl font-bold text-purple-700">{stats.jellyCost.toLocaleString()}</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-emerald-50 border border-emerald-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Essence of Life</p>
-                  <p className="text-lg sm:text-2xl font-bold text-emerald-700">{stats.essenceCost.toLocaleString()}</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-cyan-50 border border-cyan-100 rounded-lg text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Diamond Cost</p>
-                  <p className="text-lg sm:text-2xl font-bold text-cyan-700">{stats.diamondCost.toLocaleString()}</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-red-50 border border-red-100 rounded-lg text-center col-span-2">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">PHP Cost</p>
-                  <p className="text-lg sm:text-2xl font-bold text-red-700">{(stats.totalGoldSpent * 0.7).toLocaleString()} PHP</p>
-                </div>
-                <div className="p-2 sm:p-4 bg-indigo-50 border border-indigo-100 rounded-lg text-center col-span-2">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-0">Chance to reach +{targetLevel} from +{currentLevel}</p>
-                  <p className="text-lg sm:text-2xl font-bold text-indigo-700">{(reachTargetChance * 100).toFixed(6)}%</p>
-                </div>
-              </div>
-            </div>
-
             {/* Attempts Table - Mobile improvements only */}
             <div className="mt-6 sm:mt-10">
               <h2 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">All Attempts</h2>
               <div className="relative h-[200px] border border-gray-200 rounded-xl bg-white shadow-inner overflow-x-auto">
-                <div className="absolute inset-0 overflow-y-auto">
+                <div ref={tableContainerRef} className="absolute inset-0 overflow-y-auto">
                   <table className="min-w-full text-xs sm:text-sm">
                     <thead className="sticky top-0 z-10 bg-gray-100">
                       <tr>
@@ -491,7 +485,6 @@ export default function EnhancementSimulator() {
                       ))}
                     </tbody>
                   </table>
-                  <div ref={attemptsEndRef} />
                 </div>
               </div>
             </div>
