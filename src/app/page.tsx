@@ -119,7 +119,7 @@ export default function EnhancementSimulator() {
 
     const totalAttempts = attempts.length;
     const successfulAttempts = attempts.filter(attempt => attempt.success).length;
-    const totalGoldSpent = attempts.reduce((sum, attempt) => sum + ENHANCE_COST, 0);
+    const totalGoldSpent = attempts.reduce((sum) => sum + ENHANCE_COST, 0);
     
     // Calculate costs based on the new tiered system
     const jellyCost = attempts.reduce((sum, attempt) => {
